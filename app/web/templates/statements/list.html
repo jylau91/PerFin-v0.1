@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Statements · PerFin{% endblock %}
+{% block content %}
+<h2>Statements</h2>
+<p><a role="button" href="/statements/upload">Upload PDF</a></p>
+<table>
+  <thead><tr><th>Account</th><th>Period</th><th>Opening</th><th>Closing</th><th>Status</th><th></th></tr></thead>
+  <tbody>
+  {% for s in statements %}
+  <tr>
+    <td>{{ s['account_name'] }}</td>
+    <td>{{ s['period_start'] }} → {{ s['period_end'] }}</td>
+    <td>{{ '%.2f' % ((s['opening_balance_cents'] or 0) / 100) }}</td>
+    <td>{{ '%.2f' % ((s['closing_balance_cents'] or 0) / 100) }}</td>
+    <td><span class="pill {{ s['reconcile_status'] or 'unknown' }}">{{ s['reconcile_status'] or 'unknown' }}</span></td>
+    <td><a href="/statements/{{ s['id'] }}">View</a></td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

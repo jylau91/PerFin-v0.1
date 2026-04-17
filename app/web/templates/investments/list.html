@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Investments · PerFin{% endblock %}
+{% block content %}
+<h2>Investments</h2>
+<p><a role="button" href="/investments/import">Import broker CSV</a></p>
+<table>
+  <thead><tr><th>Symbol</th><th>Account</th><th>Quantity</th><th>Currency</th><th>Last close</th><th>Value</th></tr></thead>
+  <tbody>
+  {% for h in holdings %}
+  <tr>
+    <td>{{ h['symbol'] }}</td>
+    <td>{{ h['account_name'] }}</td>
+    <td>{{ h['qty'] }}</td>
+    <td>{{ h['currency'] }}</td>
+    <td>{{ '%.2f' % ((h['close_cents'] or 0) / 100) }}</td>
+    <td>{{ '%.2f' % (((h['close_cents'] or 0) * (h['qty'] or 0)) / 100) }}</td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

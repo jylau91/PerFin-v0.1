@@ -1,0 +1,14 @@
+<article>
+  {% if result.insights %}
+  <h4>Insights</h4>
+  <ul>{% for i in result.insights %}<li><strong>{{ i.title }}</strong> — {{ i.detail }}</li>{% endfor %}</ul>
+  {% endif %}
+  {% if result.recommendations %}
+  <h4>Recommendations</h4>
+  <ul>{% for r in result.recommendations %}
+    <li><strong>{{ r.area }}</strong>: {{ r.action }}
+      {% if r.estimated_monthly_saving_sgd %}<small>(~S${{ '%.0f' % r.estimated_monthly_saving_sgd }}/mo)</small>{% endif %}
+    </li>{% endfor %}</ul>
+  {% endif %}
+  {% if not result.insights and not result.recommendations %}<pre>{{ result }}</pre>{% endif %}
+</article>

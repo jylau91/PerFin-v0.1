@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}Import investments · PerFin{% endblock %}
+{% block content %}
+<h2>Import broker CSV</h2>
+
+{% if columns is none and result is none %}
+<form method="post" action="/investments/import/sniff" enctype="multipart/form-data">
+  <label>Broker name
+    <input type="text" name="broker_name" placeholder="IBKR / Tiger / Saxo / Moomoo" required>
+  </label>
+  <label>CSV file
+    <input type="file" name="csv_file" accept=".csv" required>
+  </label>
+  <button type="submit">Next: map columns</button>
+</form>
+{% endif %}
+
+{% if columns %}
+<form method="post" action="/investments/import/apply">
+  <input type="hidden" name="broker_name" value="{{ broker_name }}">
+  <input type="hidden" name="encoded" value="{{ encoded }}">
+  <label>Account name
+    <input type="text" name="account_name" value="{{ broker_name }}" required>
+  </label>
+  <fieldset>
+    <legend>Map columns</legend>
+    {% set opts = columns %}
+    <label>Symbol *
+      <select name="symbol_col" required>
+        {% for c in opts %}<option>{{ c }}</option>{% endfor %}
+      </select>
+    </label>
+    <label>Quantity *
+      <select name="quantity_col" required>
+        {% for c in opts %}<option>{{ c }}</option>{% endfor %}
+      </select>
+    </label>
+    <label>Average cost
+      <select name="avg_cost_col"><option value=""></option>{% for c in opts %}<option>{{ c }}</option>{% endfor %}</select>
+    </label>
+    <label>Currency
+      <select name="currency_col"><option value=""></option>{% for c in opts %}<option>{{ c }}</option>{% endfor %}</select>
+    </label>
+    <label>As-of date
+      <select name="as_of_date_col"><option value=""></option>{% for c in opts %}<option>{{ c }}</option>{% endfor %}</select>
+    </label>
+  </fieldset>
+  <button type="submit">Import</button>
+</form>
+{% endif %}
+
+{% if result %}
+<article>
+  <p>Inserted: {{ result.inserted }}</p>
+  {% if result.errors %}
+    <details><summary>{{ result.errors | length }} error(s)</summary>
+      <ul>{% for e in result.errors %}<li><code>{{ e }}</code></li>{% endfor %}</ul>
+    </details>
+  {% endif %}
+</article>
+{% endif %}
+{% endblock %}

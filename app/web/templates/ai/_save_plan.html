@@ -1,0 +1,9 @@
+<article>
+  {% if result.target_monthly_save_sgd is defined %}
+    <h4>Target: S${{ '%.0f' % result.target_monthly_save_sgd }}/mo</h4>
+  {% endif %}
+  {% if result.plan_markdown %}<pre style="white-space:pre-wrap;">{{ result.plan_markdown }}</pre>{% endif %}
+  {% if result.weekly_actions %}
+    <ol>{% for a in result.weekly_actions %}<li>{{ a }}</li>{% endfor %}</ol>
+  {% endif %}
+</article>

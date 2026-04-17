@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>PerFin · Login</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+</head>
+<body>
+<main class="container" style="max-width: 420px; margin-top: 6rem;">
+  <hgroup>
+    <h1>PerFin</h1>
+    <h2>Enter passphrase</h2>
+  </hgroup>
+  {% if error %}<article style="background:#fee2e2;color:#991b1b;">{{ error }}</article>{% endif %}
+  <form method="post" action="/login">
+    <input type="password" name="passphrase" placeholder="passphrase" autofocus required>
+    <button type="submit">Unlock</button>
+  </form>
+</main>
+</body>
+</html>

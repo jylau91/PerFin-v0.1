@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block title %}Dashboard · PerFin{% endblock %}
+{% block content %}
+<section class="grid">
+  <article>
+    <header>Net worth</header>
+    <h2>{{ fmt(net_worth) }}</h2>
+  </article>
+  <article>
+    <header>Cash (net of CC)</header>
+    <h3>{{ fmt(cash - cc) }}</h3>
+    <small>Cash {{ fmt(cash) }} · Cards owed {{ fmt(cc) }}</small>
+  </article>
+  <article>
+    <header>Investments</header>
+    <h3>{{ fmt(inv) }}</h3>
+  </article>
+</section>
+
+<section>
+  <h3>Accounts</h3>
+  <table>
+    <thead><tr><th>Type</th><th>Name</th><th>Last statement</th><th>Closing</th><th>Status</th></tr></thead>
+    <tbody>
+      {% for a in accounts %}
+      <tr>
+        <td>{{ a['type'] }}</td>
+        <td>{{ a['name'] }}</td>
+        <td>{{ a['period_end'] or '—' }}</td>
+        <td>{{ fmt(a['closing_balance_cents'] or 0) }}</td>
+        <td>
+          {% set s = a['reconcile_status'] or 'unknown' %}
+          <span class="pill {{ s }}">{{ s }}</span>
+        </td>
+      </tr>
+      {% else %}
+      <tr><td colspan="5"><em>No accounts yet. <a href="/statements/upload">Upload a statement</a>.</em></td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+
+<section class="grid">
+  <article>
+    <header>AgentMail</header>
+    {% if agentmail_enabled %}
+      {% if last_poll %}
+        <p><small>
+          Last poll {{ last_poll['ran_at'] }} · matched {{ last_poll['matched'] }} ·
+          ingested {{ last_poll['ingested'] }} · skipped {{ last_poll['skipped'] }} ·
+          errors {{ last_poll['errored'] }}
+        </small></p>
+      {% else %}
+        <p><em>No pulls yet.</em></p>
+      {% endif %}
+      <button hx-post="/statements/pull-agentmail" hx-target="#pull-result">Pull from AgentMail now</button>
+      <div id="pull-result" style="margin-top:0.5rem;"></div>
+    {% else %}
+      <p><small>Configure <code>AGENTMAIL_API_KEY</code> and <code>AGENTMAIL_INBOX_ID</code> to enable.</small></p>
+    {% endif %}
+  </article>
+  <article>
+    <header>Reconcile mismatches</header>
+    {% if mismatches %}
+      <ul>
+        {% for m in mismatches %}
+        <li><a href="/statements/{{ m['id'] }}">{{ m['name'] }} · {{ m['period_end'] }}</a>
+          <small>Δ {{ fmt(m['reconcile_delta_cents'] or 0) }}</small></li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p><em>All clean.</em></p>
+    {% endif %}
+  </article>
+</section>
+{% endblock %}

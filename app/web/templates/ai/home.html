@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}AI · PerFin{% endblock %}
+{% block content %}
+<h2>AI assistants</h2>
+<p><small>Results are cached; re-runs on unchanged data are free.</small></p>
+<section class="grid">
+  <article>
+    <header>Spend analysis</header>
+    <button hx-post="/ai/spend-analysis" hx-target="#sa-out">Analyse last 3 months</button>
+    <div id="sa-out"></div>
+  </article>
+  <article>
+    <header>Suspicious expenses</header>
+    <button hx-post="/ai/anomalies" hx-target="#an-out">Flag anomalies</button>
+    <div id="an-out"></div>
+  </article>
+  <article>
+    <header>Monthly save plan</header>
+    <button hx-post="/ai/save-plan" hx-target="#sp-out">Generate plan</button>
+    <div id="sp-out"></div>
+  </article>
+</section>
+{% endblock %}

@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>{% block title %}PerFin{% endblock %}</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+  <script src="https://unpkg.com/htmx.org@2.0.2"></script>
+  <style>
+    .pill { padding: 0.15rem 0.5rem; border-radius: 1rem; font-size: 0.8rem; }
+    .pill.ok { background: #d1fae5; color: #065f46; }
+    .pill.mismatch { background: #fee2e2; color: #991b1b; }
+    .pill.unknown { background: #e5e7eb; color: #374151; }
+    nav ul { display: flex; gap: 1rem; list-style: none; padding: 0; }
+    .amount-neg { color: #b91c1c; }
+    .amount-pos { color: #065f46; }
+    table { font-size: 0.9rem; }
+  </style>
+</head>
+<body>
+<main class="container">
+  <nav>
+    <ul>
+      <li><strong>PerFin</strong></li>
+      <li><a href="/">Dashboard</a></li>
+      <li><a href="/statements">Statements</a></li>
+      <li><a href="/transactions">Transactions</a></li>
+      <li><a href="/investments">Investments</a></li>
+      <li><a href="/reconcile">Reconcile</a></li>
+      <li><a href="/ai">AI</a></li>
+    </ul>
+    <form method="post" action="/logout" style="margin:0;">
+      <button type="submit" class="secondary outline">Log out</button>
+    </form>
+  </nav>
+  <hr>
+  {% block content %}{% endblock %}
+</main>
+</body>
+</html>
