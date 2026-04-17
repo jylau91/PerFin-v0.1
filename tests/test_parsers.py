@@ -23,6 +23,19 @@ def test_parse_date_dd_mmm_uses_period_year():
     assert d.year == 2026
 
 
+def test_parse_date_year_crossing_prefers_period_start_year():
+    from datetime import date
+
+    # Statement period 15 Dec 2025 → 14 Jan 2026: "31 Dec" belongs to 2025.
+    ps, pe = date(2025, 12, 15), date(2026, 1, 14)
+    d = _parse_date("31 Dec", period_start=ps, period_end=pe)
+    assert d == date(2025, 12, 31)
+
+    # "05 Jan" belongs to 2026.
+    d2 = _parse_date("05 Jan", period_start=ps, period_end=pe)
+    assert d2 == date(2026, 1, 5)
+
+
 def test_to_cents_handles_commas():
     assert _to_cents("1,234.56") == 123456
 

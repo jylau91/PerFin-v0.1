@@ -85,18 +85,23 @@ def ingest_pdf(
         parser_id=parser.parser_id,
     )
     rows = []
+    seq_counter: dict[tuple[str, int, str], int] = {}
     for t in parsed.transactions:
+        txn_date_iso = t.txn_date.isoformat()
+        key = (txn_date_iso, t.amount_cents, t.raw_description)
+        seq = seq_counter.get(key, 0)
+        seq_counter[key] = seq + 1
         rows.append(
             {
                 "statement_id": stmt_id,
                 "account_id": account_id,
-                "txn_date": t.txn_date.isoformat(),
+                "txn_date": txn_date_iso,
                 "post_date": t.post_date.isoformat() if t.post_date else None,
                 "description": t.description,
                 "raw_description": t.raw_description,
                 "amount_cents": t.amount_cents,
                 "currency": t.currency,
-                "hash": txn_hash(account_id, t.txn_date.isoformat(), t.amount_cents, t.raw_description),
+                "hash": txn_hash(account_id, txn_date_iso, t.amount_cents, t.raw_description, seq),
             }
         )
     inserted, skipped = insert_transactions(rows)

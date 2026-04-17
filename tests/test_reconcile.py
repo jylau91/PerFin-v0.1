@@ -64,3 +64,13 @@ def test_unknown_when_no_balances(migrated_db):
     status, delta = reconcile_statement(sid)
     assert status == "unknown"
     assert delta is None
+
+
+def test_txn_hash_seq_disambiguates_same_day_duplicates():
+    from app.db.repo import txn_hash
+
+    base = (1, "2026-01-15", 500, "STARBUCKS ORCHARD")
+    h0 = txn_hash(*base, seq=0)
+    h1 = txn_hash(*base, seq=1)
+    assert h0 != h1
+    assert txn_hash(*base) == h0

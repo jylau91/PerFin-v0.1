@@ -32,7 +32,8 @@ def refresh_prices() -> int:
             if hist.empty:
                 continue
             close = float(hist["Close"].iloc[-1])
-            currency = getattr(t.info, "currency", None) if hasattr(t, "info") else "USD"
+            info = getattr(t, "info", None) or {}
+            currency = info.get("currency") if isinstance(info, dict) else None
             conn.execute(
                 "INSERT OR REPLACE INTO prices (symbol, as_of_date, close_cents, currency) VALUES (?, ?, ?, ?)",
                 (sym, today, _to_cents(close), currency or "USD"),

@@ -36,9 +36,19 @@ def list_accounts() -> list[sqlite3.Row]:
     return list(get_conn().execute("SELECT * FROM accounts ORDER BY type, name").fetchall())
 
 
-def txn_hash(account_id: int, txn_date: str, amount_cents: int, raw_desc: str) -> str:
-    h = hashlib.sha256(f"{account_id}|{txn_date}|{amount_cents}|{raw_desc}".encode()).hexdigest()
-    return h
+def txn_hash(
+    account_id: int,
+    txn_date: str,
+    amount_cents: int,
+    raw_desc: str,
+    seq: int = 0,
+) -> str:
+    # `seq` disambiguates legitimate same-day duplicates (e.g. two identical charges
+    # at the same merchant for the same amount on the same day) so they don't
+    # collide on the UNIQUE(hash) constraint.
+    return hashlib.sha256(
+        f"{account_id}|{txn_date}|{amount_cents}|{raw_desc}|{seq}".encode()
+    ).hexdigest()
 
 
 def insert_statement(

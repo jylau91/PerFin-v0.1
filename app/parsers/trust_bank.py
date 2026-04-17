@@ -36,21 +36,39 @@ TRUST_TEMPLATE: dict[str, re.Pattern[str]] = {
 }
 
 
-def _parse_date(s: str, period_end: date | None = None) -> date:
+def _parse_date(
+    s: str,
+    period_start: date | None = None,
+    period_end: date | None = None,
+) -> date:
     s = s.strip()
     for fmt in ("%d %b %Y", "%d %B %Y"):
         try:
             return datetime.strptime(s, fmt).date()
         except ValueError:
             continue
+    parsed = None
     for fmt in ("%d %b", "%d %B"):
         try:
             parsed = datetime.strptime(s, fmt).date()
-            year = (period_end or date.today()).year
-            return parsed.replace(year=year)
+            break
         except ValueError:
             continue
-    raise ParseError(f"Trust parser: unparseable date '{s}'")
+    if parsed is None:
+        raise ParseError(f"Trust parser: unparseable date '{s}'")
+
+    # Year-crossing statement periods (e.g. 15 Dec 2025 → 14 Jan 2026):
+    # try period_end.year first, fall back to period_start.year if the
+    # resulting date falls outside the statement window.
+    if period_start and period_end and period_start.year != period_end.year:
+        for year in (period_end.year, period_start.year):
+            candidate = parsed.replace(year=year)
+            if period_start <= candidate <= period_end:
+                return candidate
+        return parsed.replace(year=period_end.year)
+
+    ref = period_end or period_start or date.today()
+    return parsed.replace(year=ref.year)
 
 
 def _to_cents(raw: str) -> int:
@@ -95,8 +113,8 @@ class TrustBankParser(StatementParser):
             m = TRUST_TEMPLATE["txn_line"].match(line)
             if not m:
                 continue
-            txn_d = _parse_date(m.group("txn"), period_end)
-            post_d = _parse_date(m.group("post"), period_end)
+            txn_d = _parse_date(m.group("txn"), period_start, period_end)
+            post_d = _parse_date(m.group("post"), period_start, period_end)
             amount_cents = _to_cents(m.group("amount"))
             # CR flag = payment/refund: credit to card (reduces balance) → negative amount.
             # Normal charges are positive amounts (spending).
