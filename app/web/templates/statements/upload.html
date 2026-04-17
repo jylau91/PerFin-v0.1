@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Upload statement · PerFin{% endblock %}
+{% block content %}
+<h2>Upload statement</h2>
+<form method="post" action="/statements/upload" enctype="multipart/form-data">
+  <label>PDF
+    <input type="file" name="pdf" accept="application/pdf" required>
+  </label>
+  <label>Password (optional)
+    <input type="password" name="password" placeholder="leave blank if none">
+  </label>
+  <button type="submit">Upload</button>
+</form>
+
+{% if result %}
+<article>
+  {% if result.ok %}
+    <header><strong>✓ Parsed with {{ result.parser_id }}</strong></header>
+    <p>Statement id <a href="/statements/{{ result.statement_id }}">#{{ result.statement_id }}</a> ·
+       inserted {{ result.inserted }} · skipped {{ result.skipped }} ·
+       reconcile <span class="pill {{ result.reconcile_status or 'unknown' }}">{{ result.reconcile_status or 'unknown' }}</span></p>
+  {% else %}
+    <header style="color:#991b1b;"><strong>✗ Failed</strong></header>
+    <p>{{ result.error }}</p>
+  {% endif %}
+</article>
+{% endif %}
+{% endblock %}

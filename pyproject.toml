@@ -1,0 +1,46 @@
+[project]
+name = "perfin"
+version = "0.1.0"
+description = "Personal asset manager for local Mac mini + Tailscale."
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi>=0.115",
+    "uvicorn[standard]>=0.30",
+    "jinja2>=3.1",
+    "python-multipart>=0.0.9",
+    "pydantic-settings>=2.4",
+    "itsdangerous>=2.2",
+    "apscheduler>=3.10",
+    "anthropic>=0.40",
+    "pdfplumber>=0.11",
+    "agentmail>=0.0.30",
+    "yfinance>=0.2.40",
+    "httpx>=0.27",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.2",
+    "pytest-asyncio>=0.23",
+    "ruff>=0.6",
+]
+# monopoly-core requires poppler (libpoppler-cpp-dev on Linux, `brew install poppler` on macOS).
+# Install with: `uv sync --extra parsers` after poppler is available.
+parsers = [
+    "monopoly-core==0.14.0",
+]
+
+[tool.ruff]
+line-length = 110
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]
+ignore = ["E501", "B008"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["E501"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"

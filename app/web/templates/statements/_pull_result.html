@@ -1,0 +1,10 @@
+<article>
+  <strong>Pulled from AgentMail.</strong>
+  matched {{ report.matched }} · ingested {{ report.ingested }} ·
+  skipped {{ report.skipped }} · errors {{ report.errored }}
+  {% if report.errors %}
+    <details><summary>Errors</summary>
+      <ul>{% for e in report.errors %}<li><code>{{ e }}</code></li>{% endfor %}</ul>
+    </details>
+  {% endif %}
+</article>

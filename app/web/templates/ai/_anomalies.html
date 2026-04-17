@@ -1,0 +1,18 @@
+<article>
+  {% if result.flagged %}
+    <table>
+      <thead><tr><th>Hash</th><th>Reason</th><th>Confidence</th></tr></thead>
+      <tbody>
+      {% for f in result.flagged %}
+      <tr>
+        <td><code>{{ f.hash[:12] }}…</code></td>
+        <td>{{ f.reason }}</td>
+        <td>{{ '%.0f' % (f.confidence * 100) }}%</td>
+      </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p><em>Nothing flagged.</em></p>
+  {% endif %}
+</article>

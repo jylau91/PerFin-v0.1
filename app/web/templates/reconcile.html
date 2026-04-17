@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Reconcile · PerFin{% endblock %}
+{% block content %}
+<h2>Reconcile</h2>
+<table>
+  <thead><tr><th>Account</th><th>Period</th><th>Δ</th><th>Status</th><th></th></tr></thead>
+  <tbody>
+  {% for s in statements %}
+  <tr>
+    <td>{{ s['account_name'] }}</td>
+    <td>{{ s['period_start'] }} → {{ s['period_end'] }}</td>
+    <td>{{ '%.2f' % ((s['reconcile_delta_cents'] or 0) / 100) }}</td>
+    <td><span class="pill {{ s['reconcile_status'] or 'unknown' }}">{{ s['reconcile_status'] or 'unknown' }}</span></td>
+    <td>
+      <button hx-post="/reconcile/{{ s['id'] }}/run" hx-swap="none">Re-run</button>
+      <a href="/transactions?statement_id={{ s['id'] }}">View txns</a>
+    </td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
